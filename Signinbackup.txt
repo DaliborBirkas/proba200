@@ -1,0 +1,92 @@
+<?php
+if(isset($_POST['signup-submit'])){
+    require "db_config.php";
+    $uname=$_POST['uid'];
+    $ulastname=$_POST['ulastname'];
+    $unumber=$_POST['unumber'];
+    $email=$_POST['mail'];
+    $password=$_POST['pwd'];
+    $passwordRepeat=$_POST['pwd-repeat'];
+    if(empty($uname) || empty($email) || empty($password) || empty($passwordRepeat
+        || empty($ulastname) ||empty($unumber))){
+
+        echo '<script language="javascript">';
+        echo 'alert("Fill the fields");';
+        echo 'window.location.href="ls.php";';
+        echo '</script>';
+        exit();
+
+    }
+    else if(!filter_var($email,FILTER_VALIDATE_EMAIL ) && !preg_match("/^[a-zA-Z]*$/",$uname)){
+/*!preg_match("/^[a-zA-Z0-9]*$/",$username)*/
+        exit();
+    }
+    else if(!filter_var($email,FILTER_VALIDATE_EMAIL ) || !preg_match("/^[a-zA-Z]*$/",$uname)
+    || !preg_match("/^[a-zA-Z]*$/",$ulastname) || !preg_match("/^[0-9]*$/",$unumber)
+    ){
+        /*!preg_match("/^[a-zA-Z0-9]*$/",$username)*/
+        exit();
+    }
+    else if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
+        exit();
+    }
+    else if(!preg_match("/^[a-zA-Z]*$/",$uname)){
+        exit();
+    }
+    else if(!preg_match("/^[a-zA-Z]*$/",$ulastname)){
+        exit();
+    }
+    else if(!preg_match("/^[0-9]*$/",$unumber)){
+        exit();
+    }
+    else if($password !==$passwordRepeat){
+exit();
+    }
+    else{
+        $sql="SELECT emailKorisnik FROM korisnik where emailKorisnik=? ";
+        $stmt=mysqli_stmt_init($connection);
+            if(!mysqli_stmt_prepare($stmt,$sql)){
+                exit();
+            }
+
+            else{
+                mysqli_stmt_bind_param($stmt,"s",$email);/*s string,b boolean, i interger moze vise
+                parametra da se salje samo se doda jos jedno s ili nesto drugo*/
+
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_store_result($stmt);
+                $resultCheck=mysqli_stmt_num_rows($stmt);
+                if($resultCheck>0){
+                    echo "Ovaj email vec postoji u bazi";
+                    exit();
+                }
+                else{
+                        $sql="INSERT INTO korisnik(uidKorisnik,emailKorisnik,pwdKorisnik) VALUES(?,?,?)";
+                    $stmt=mysqli_stmt_init($connection);
+                    if(!mysqli_stmt_prepare($stmt,$sql)){
+                        exit();
+                    }
+                    else{
+                        $hashedPwd=password_hash($password,PASSWORD_DEFAULT); //bcrypt
+
+                        mysqli_stmt_bind_param($stmt,"sss",$uname,$email,$hashedPwd);
+                        mysqli_stmt_execute($stmt);
+                        mysqli_stmt_store_result($stmt);
+
+
+                    }
+
+                }
+            }
+
+    }
+mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+
+}
+
+else{
+    header("Location:../ls.php");
+    exit();
+}
+?>

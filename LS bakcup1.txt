@@ -1,0 +1,42 @@
+<section  >
+
+        <br>
+        <div>
+
+            <?php
+            if(isset($_SESSION['userId'])){
+                echo ' <form method="post" action="logout.php">
+            <button type="submit" name="logout-submit" >Logout</button>
+        </form>';
+            }
+            else{
+                echo '  <div>
+                            <h1>Sign up</h1>
+          
+                               <form method="post" action="signup.php">
+                                    <input type="text" name="uid" placeholder="Username">
+                                    <input type="text" name="mail" placeholder="Email">
+                                    <input type="password" name="pwd" placeholder="Password">
+                                    <input type="password" name="pwd-repeat" placeholder="Repeat Password">
+                                    <button type="submit" name="signup-submit">
+                                        Sign up
+                                        </button>
+
+                                </form>
+                        </div>
+                            
+                    <h1>Login</h1>
+                 <form method="post" action="login.php">
+                    <input type="text" name="mailuid" placeholder="Username/Email">
+                    <input type="password" name="pwd" placeholder="Password">
+                    <button type="submit" name="login-submit" >Login</button>
+                 </form>';
+            }
+            ?>
+
+        </div>
+
+
+
+
+    </section>
